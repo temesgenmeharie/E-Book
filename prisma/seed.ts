@@ -107,7 +107,7 @@ async function main() {
   }
   console.log("✅ Publisher account verified and seeded.");
 
-  // 5. Seed Sample Books with High-Resolution Covers
+  // 5. Seed Sample Books with High-Resolution Local SVG Covers
   const sampleBooks = [
     {
       title: "Oromay (ኦሮማይ)",
@@ -116,7 +116,7 @@ async function main() {
       authorName: "Baalu Girma",
       language: "am",
       description: "Set against the dramatic backdrop of the Red Star Campaign, Oromay is one of the most celebrated and gripping novels in Ethiopian literary history. It weaves profound human drama, military tension, and societal reflection into an unforgettable narrative.",
-      coverImageKey: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600",
+      coverImageKey: "/covers/oromay.svg",
       averageRating: 4.95,
       reviewCount: 142,
       categorySlug: "ethiopian-history-culture",
@@ -130,7 +130,7 @@ async function main() {
       authorName: "Martin Kleppmann",
       language: "en",
       description: "Data is at the center of many challenges in system design today. Difficult issues need to be figured out, such as scalability, consistency, reliability, efficiency, and maintainability. This book helps software engineers navigate the diverse landscape of databases, stream processing, and distributed architectures.",
-      coverImageKey: "https://images.unsplash.com/photo-1532012164546-f432f2e3edd4?auto=format&fit=crop&q=80&w=600",
+      coverImageKey: "/covers/ddia.svg",
       averageRating: 4.98,
       reviewCount: 89,
       categorySlug: "technology-software",
@@ -144,7 +144,7 @@ async function main() {
       authorName: "Haddis Alemayehu",
       language: "am",
       description: "Widely regarded as the pinnacle of Amharic prose, Fikir Eske Mekabir tells the immortal love story of Bezabih and Seblewongel. Rich with philosophical insight into feudal Ethiopian society, class dynamics, and enduring human emotion.",
-      coverImageKey: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600",
+      coverImageKey: "/covers/fikir-eske-mekabir.svg",
       averageRating: 4.97,
       reviewCount: 215,
       categorySlug: "fiction-literature",
@@ -158,7 +158,7 @@ async function main() {
       authorName: "Peter Thiel",
       language: "en",
       description: "The great secret of our time is that there are still uncharted frontiers and new inventions to create. In Zero to One, legendary entrepreneur and investor Peter Thiel shows how we can find singular ways to create new things and innovate from scratch.",
-      coverImageKey: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=600",
+      coverImageKey: "/covers/zero-to-one.svg",
       averageRating: 4.85,
       reviewCount: 64,
       categorySlug: "business-economics",
@@ -172,7 +172,7 @@ async function main() {
       authorName: "James Clear",
       language: "en",
       description: "No matter your goals, Atomic Habits offers a proven framework for improving every day. James Clear, one of the world's leading experts on habit formation, reveals practical strategies that will teach you exactly how to master tiny behaviors that lead to remarkable results.",
-      coverImageKey: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=600",
+      coverImageKey: "/covers/atomic-habits.svg",
       averageRating: 4.92,
       reviewCount: 310,
       categorySlug: "self-development",

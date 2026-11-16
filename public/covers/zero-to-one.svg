@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="100%" height="100%">
+  <defs>
+    <linearGradient id="stealthGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b"/>
+      <stop offset="60%" stop-color="#09090b"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="neonCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="560" fill="url(#stealthGrad)"/>
+  <rect x="0" y="0" width="22" height="560" fill="#000000" opacity="0.6"/>
+
+  <!-- Minimalist High-Tech Line -->
+  <line x1="50" y1="40" x2="350" y2="40" stroke="#27272a" stroke-width="2"/>
+
+  <!-- Badge -->
+  <text x="50" y="80" fill="#38bdf8" font-family="system-ui, sans-serif" font-size="11" font-weight="800" letter-spacing="2">NEW YORK TIMES BESTSELLER</text>
+
+  <!-- Big Dramatic 0 to 1 Title -->
+  <text x="50" y="170" fill="#ffffff" font-family="system-ui, sans-serif" font-size="64" font-weight="900" letter-spacing="-2">ZERO</text>
+  <text x="50" y="235" fill="url(#neonCyan)" font-family="system-ui, sans-serif" font-size="64" font-weight="900" letter-spacing="-2">TO ONE</text>
+
+  <!-- Subtitle -->
+  <text x="50" y="280" fill="#a1a1aa" font-family="system-ui, sans-serif" font-size="13" font-weight="600" letter-spacing="0.5">NOTES ON STARTUPS, OR</text>
+  <text x="50" y="300" fill="#a1a1aa" font-family="system-ui, sans-serif" font-size="13" font-weight="600" letter-spacing="0.5">HOW TO BUILD THE FUTURE</text>
+
+  <!-- Graphic: Exponential Growth Arc -->
+  <g transform="translate(50, 420)">
+    <path d="M0,0 Q160,-20 280,-120" fill="none" stroke="url(#neonCyan)" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="280" cy="-120" r="6" fill="#38bdf8"/>
+    <line x1="0" y1="10" x2="300" y2="10" stroke="#27272a" stroke-width="1.5"/>
+    <text x="0" y="28" fill="#71717a" font-family="system-ui, sans-serif" font-size="11" font-weight="700">0: HORIZONTAL PROGRESS</text>
+    <text x="290" y="-132" fill="#38bdf8" font-family="system-ui, sans-serif" font-size="11" font-weight="700" text-anchor="end">1: VERTICAL INNOVATION</text>
+  </g>
+
+  <!-- Author -->
+  <text x="50" y="500" fill="#ffffff" font-family="system-ui, sans-serif" font-size="22" font-weight="800" letter-spacing="1">PETER THIEL</text>
+  <text x="50" y="522" fill="#71717a" font-family="system-ui, sans-serif" font-size="11" font-weight="600">WITH BLAKE MASTERS &middot; FOUNDERS FUND</text>
+</svg>
+

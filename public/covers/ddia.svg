@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="100%" height="100%">
+  <defs>
+    <linearGradient id="techBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="neonGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Cover Background -->
+  <rect width="400" height="560" fill="url(#techBg)"/>
+  <rect x="0" y="0" width="22" height="560" fill="#000000" opacity="0.5"/>
+
+  <!-- Geometric Grid Pattern Overlay -->
+  <g stroke="#334155" stroke-width="0.5" opacity="0.3">
+    <line x1="40" y1="0" x2="40" y2="560"/>
+    <line x1="120" y1="0" x2="120" y2="560"/>
+    <line x1="200" y1="0" x2="200" y2="560"/>
+    <line x1="280" y1="0" x2="280" y2="560"/>
+    <line x1="360" y1="0" x2="360" y2="560"/>
+    <line x1="0" y1="100" x2="400" y2="100"/>
+    <line x1="0" y1="200" x2="400" y2="200"/>
+    <line x1="0" y1="300" x2="400" y2="300"/>
+    <line x1="0" y1="400" x2="400" y2="400"/>
+  </g>
+
+  <!-- Badge -->
+  <rect x="50" y="55" width="165" height="24" rx="4" fill="#047857"/>
+  <text x="132" y="71" fill="#ecfdf5" font-family="system-ui, sans-serif" font-size="10" font-weight="700" letter-spacing="1.5" text-anchor="middle">SOFTWARE ARCHITECTURE</text>
+
+  <!-- Title -->
+  <text x="50" y="140" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="34" font-weight="900" letter-spacing="-0.5">Designing</text>
+  <text x="50" y="180" fill="url(#neonGreen)" font-family="system-ui, sans-serif" font-size="34" font-weight="900" letter-spacing="-0.5">Data-Intensive</text>
+  <text x="50" y="220" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="34" font-weight="900" letter-spacing="-0.5">Applications</text>
+
+  <!-- Subtitle -->
+  <text x="50" y="260" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12" font-weight="500">The Big Ideas Behind Reliable, Scalable &amp;</text>
+  <text x="50" y="278" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12" font-weight="500">Maintainable Distributed Systems</text>
+
+  <!-- Graphic Vector Node Mesh -->
+  <g transform="translate(200, 370)">
+    <!-- Connected Mesh -->
+    <path d="M-90,-20 L0,-70 L90,-30 L50,50 L-60,40 Z" fill="none" stroke="#10b981" stroke-width="1.5" opacity="0.6"/>
+    <line x1="0" y1="-70" x2="50" y2="50" stroke="#059669" stroke-width="1" opacity="0.4"/>
+    <line x1="-90" y1="-20" x2="50" y2="50" stroke="#059669" stroke-width="1" opacity="0.4"/>
+    <circle cx="-90" cy="-20" r="7" fill="#34d399"/>
+    <circle cx="0" cy="-70" r="9" fill="#10b981"/>
+    <circle cx="90" cy="-30" r="6" fill="#34d399"/>
+    <circle cx="50" cy="50" r="8" fill="#059669"/>
+    <circle cx="-60" cy="40" r="7" fill="#10b981"/>
+  </g>
+
+  <!-- Author -->
+  <rect x="50" y="475" width="300" height="1" fill="#334155"/>
+  <text x="50" y="505" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="17" font-weight="700">Martin Kleppmann</text>
+  <text x="50" y="523" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" font-weight="600">UNIVERSITY OF CAMBRIDGE</text>
+</svg>
+

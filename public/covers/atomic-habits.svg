@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="100%" height="100%">
+  <defs>
+    <linearGradient id="warmBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="60%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="560" fill="url(#warmBg)"/>
+  <rect x="0" y="0" width="20" height="560" fill="#000000" opacity="0.12"/>
+
+  <!-- Top Badge -->
+  <rect x="50" y="45" width="300" height="28" rx="14" fill="#b45309"/>
+  <text x="200" y="63" fill="#ffffff" font-family="system-ui, sans-serif" font-size="10" font-weight="800" letter-spacing="1.5" text-anchor="middle">OVER 15 MILLION COPIES SOLD</text>
+
+  <!-- Title -->
+  <text x="200" y="150" fill="#1c1917" font-family="system-ui, sans-serif" font-size="44" font-weight="900" text-anchor="middle" letter-spacing="2">ATOMIC</text>
+  <text x="200" y="200" fill="#d97706" font-family="system-ui, sans-serif" font-size="44" font-weight="900" text-anchor="middle" letter-spacing="2">HABITS</text>
+
+  <!-- Subtitle -->
+  <text x="200" y="240" fill="#44403c" font-family="system-ui, sans-serif" font-size="13" font-weight="700" text-anchor="middle">An Easy &amp; Proven Way to Build Good Habits</text>
+  <text x="200" y="258" fill="#44403c" font-family="system-ui, sans-serif" font-size="13" font-weight="700" text-anchor="middle">&amp; Break Bad Ones</text>
+
+  <!-- Habit Loop Graphic: Concentric Ripple Rings -->
+  <g transform="translate(200, 360)">
+    <circle r="70" fill="none" stroke="#d97706" stroke-width="1.5" opacity="0.25"/>
+    <circle r="52" fill="none" stroke="#d97706" stroke-width="2" opacity="0.45"/>
+    <circle r="34" fill="none" stroke="#d97706" stroke-width="3" opacity="0.75"/>
+    <circle r="16" fill="#b45309"/>
+    
+    <text x="0" y="5" fill="#ffffff" font-family="system-ui, sans-serif" font-size="11" font-weight="900" text-anchor="middle">1%</text>
+    <text x="0" y="105" fill="#78350f" font-family="system-ui, sans-serif" font-size="11" font-weight="700" text-anchor="middle">TINY CHANGES, REMARKABLE RESULTS</text>
+  </g>
+
+  <!-- Author -->
+  <line x1="120" y1="485" x2="280" y2="485" stroke="#d97706" stroke-width="2"/>
+  <text x="200" y="515" fill="#1c1917" font-family="system-ui, sans-serif" font-size="22" font-weight="800" text-anchor="middle" letter-spacing="1">JAMES CLEAR</text>
+</svg>
+

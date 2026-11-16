@@ -21,6 +21,7 @@ interface BookDetail {
   subtitle: string | null;
   description: string;
   authorName: string;
+  coverImageKey?: string | null;
   language: string;
   seller: {
     id: string;
