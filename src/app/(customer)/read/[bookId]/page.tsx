@@ -43,7 +43,7 @@ export default function ReaderPage() {
       }
     }
     if (bookId) checkAccess();
-  }, [bookId]);
+  }, [bookId, router]);
 
   async function saveProgress(newPage: number) {
     setCurrentPage(newPage);

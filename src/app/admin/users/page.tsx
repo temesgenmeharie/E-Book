@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   Users,
@@ -35,7 +35,7 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState("");
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
-  async function loadUsers() {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -49,11 +49,11 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [search]);
 
   useEffect(() => {
     loadUsers();
-  }, []);
+  }, [loadUsers]);
 
   async function toggleStatus(userId: string, currentStatus: boolean) {
     setActionLoadingId(userId);

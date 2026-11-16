@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -32,7 +32,7 @@ export default function CartPage() {
   const [checkingOut, setCheckingOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function loadCart() {
+  const loadCart = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`/api/cart?currency=${currency}`);
@@ -51,11 +51,11 @@ export default function CartPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [currency, router]);
 
   useEffect(() => {
     loadCart();
-  }, [currency]);
+  }, [loadCart]);
 
   async function removeItem(bookId: string) {
     try {

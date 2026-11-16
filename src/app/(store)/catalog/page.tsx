@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -47,7 +47,7 @@ export default function CatalogPage() {
     fetchInitialData();
   }, []);
 
-  async function loadBooks() {
+  const loadBooks = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -63,11 +63,11 @@ export default function CatalogPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [search, selectedCategory, currency]);
 
   useEffect(() => {
     loadBooks();
-  }, [selectedCategory, currency]);
+  }, [loadBooks]);
 
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
