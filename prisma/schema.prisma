@@ -1,0 +1,675 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------------------------------------------
+// ENUMS
+// -------------------------------------------------------------
+
+enum RoleType {
+  CUSTOMER
+  AUTHOR
+  PUBLISHER
+  CONTENT_MODERATOR
+  FINANCE_MANAGER
+  ADMINISTRATOR
+}
+
+enum SellerType {
+  INDIVIDUAL_AUTHOR
+  PUBLISHER
+}
+
+enum SellerVerificationStatus {
+  UNVERIFIED
+  PENDING_REVIEW
+  VERIFIED
+  REJECTED
+}
+
+enum BookStatus {
+  DRAFT
+  SUBMITTED_FOR_REVIEW
+  IN_REVIEW
+  CHANGES_REQUESTED
+  REJECTED
+  PUBLISHED
+  SUSPENDED
+  ARCHIVED
+}
+
+enum BookFormat {
+  PDF
+  EPUB
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PaymentStatus {
+  INITIATED
+  REQUIRES_ACTION
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  CHAPA
+  TELEBIRR
+  STRIPE
+  PAYPAL
+  MANUAL_TEST
+}
+
+enum LedgerEntryType {
+  GROSS_SALE
+  PLATFORM_COMMISSION
+  SELLER_NET_EARNING
+  REFUND_REVERSAL
+  PAYOUT_DEDUCTION
+  ADJUSTMENT
+}
+
+enum PayoutStatus {
+  REQUESTED
+  APPROVED
+  PROCESSING
+  COMPLETED
+  REJECTED
+  FAILED
+}
+
+enum ModerationAction {
+  APPROVE
+  REJECT
+  REQUEST_CHANGES
+  SUSPEND
+  RESTORE
+}
+
+// -------------------------------------------------------------
+// 1. IDENTITY & SESSIONS
+// -------------------------------------------------------------
+
+model User {
+  id                String       @id @default(uuid()) @db.Uuid
+  email             String       @unique @db.VarChar(255)
+  passwordHash      String       @db.VarChar(255)
+  fullName          String       @db.VarChar(128)
+  avatarUrl         String?      @db.VarChar(512)
+  emailVerified     Boolean      @default(false)
+  emailVerifiedAt   DateTime?    @db.Timestamptz(6)
+  isActive          Boolean      @default(true)
+  createdAt         DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime     @updatedAt @db.Timestamptz(6)
+
+  // Relationships
+  userRoles         UserRole[]
+  sessions          Session[]
+  passwordResets    PasswordResetToken[]
+  sellerProfile     SellerProfile?
+  carts             Cart[]
+  orders            Order[]
+  entitlements      Entitlement[]
+  reviews           Review[]
+  wishlists         WishlistItem[]
+  auditLogs         AuditLog[]
+  moderationReviews ModerationReview[]
+
+  @@index([email, isActive])
+  @@map("users")
+}
+
+model Role {
+  id          String     @id @default(uuid()) @db.Uuid
+  name        RoleType   @unique
+  description String     @db.VarChar(255)
+  userRoles   UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  roleId    String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model Session {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @db.Uuid
+  sessionToken String   @unique @db.VarChar(255)
+  ipAddress    String?  @db.VarChar(45)
+  userAgent    String?  @db.Text
+  expiresAt    DateTime @db.Timestamptz(6)
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionToken])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  token     String    @unique @db.VarChar(255)
+  expiresAt DateTime  @db.Timestamptz(6)
+  usedAt    DateTime? @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@map("password_reset_tokens")
+}
+
+// -------------------------------------------------------------
+// 2. SELLER & PAYOUT ACCOUNTS
+// -------------------------------------------------------------
+
+model SellerProfile {
+  id                  String                   @id @default(uuid()) @db.Uuid
+  userId              String                   @unique @db.Uuid
+  sellerType          SellerType
+  businessName        String                   @db.VarChar(255)
+  bio                 String?                  @db.Text
+  websiteUrl          String?                  @db.VarChar(512)
+  taxId               String?                  @db.VarChar(64)
+  verificationStatus  SellerVerificationStatus @default(UNVERIFIED)
+  verificationNotes   String?                  @db.Text
+  verificationIdKey   String?                  @db.VarChar(512)
+  commissionOverride  Decimal?                 @db.Decimal(5, 4)
+  availableBalance    Decimal                  @default(0.00) @db.Decimal(12, 2)
+  pendingBalance      Decimal                  @default(0.00) @db.Decimal(12, 2)
+  lifetimeEarnings    Decimal                  @default(0.00) @db.Decimal(12, 2)
+  createdAt           DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime                 @updatedAt @db.Timestamptz(6)
+
+  user           User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payoutAccounts SellerPayoutAccount[]
+  books          Book[]
+  saleLedgers    SaleLedger[]
+  payouts        Payout[]
+
+  @@index([verificationStatus])
+  @@map("seller_profiles")
+}
+
+model SellerPayoutAccount {
+  id            String   @id @default(uuid()) @db.Uuid
+  sellerId      String   @db.Uuid
+  provider      String   @db.VarChar(64)
+  accountHolder String   @db.VarChar(255)
+  accountNumber String   @db.VarChar(128)
+  bankName      String?  @db.VarChar(128)
+  isDefault     Boolean  @default(false)
+  isVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @db.Timestamptz(6)
+
+  seller  SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  payouts Payout[]
+
+  @@index([sellerId])
+  @@map("seller_payout_accounts")
+}
+
+// -------------------------------------------------------------
+// 3. CATALOG, CATEGORIES & FILES
+// -------------------------------------------------------------
+
+model Category {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique @db.VarChar(100)
+  slug        String   @unique @db.VarChar(120)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+
+  bookCategories BookCategory[]
+
+  @@map("categories")
+}
+
+model Book {
+  id              String     @id @default(uuid()) @db.Uuid
+  sellerId        String     @db.Uuid
+  title           String     @db.VarChar(255)
+  slug            String     @unique @db.VarChar(280)
+  subtitle        String?    @db.VarChar(255)
+  description     String     @db.Text
+  authorName      String     @db.VarChar(128)
+  isbn            String?    @db.VarChar(32)
+  language        String     @default("en") @db.VarChar(10)
+  publicationDate DateTime?  @db.Date
+  coverImageKey   String     @db.VarChar(512)
+  status          BookStatus @default(DRAFT)
+  averageRating   Decimal    @default(0.0) @db.Decimal(3, 2)
+  reviewCount     Int        @default(0)
+  createdAt       DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime   @updatedAt @db.Timestamptz(6)
+
+  seller            SellerProfile      @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+  categories        BookCategory[]
+  files             BookFile[]
+  prices            BookPrice[]
+  moderationReviews ModerationReview[]
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+  entitlements      Entitlement[]
+  reviews           Review[]
+  wishlists         WishlistItem[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([language])
+  @@index([averageRating])
+  @@index([createdAt])
+  @@map("books")
+}
+
+model BookCategory {
+  bookId     String @db.Uuid
+  categoryId String @db.Uuid
+
+  book     Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@id([bookId, categoryId])
+  @@index([categoryId])
+  @@map("book_categories")
+}
+
+model BookFile {
+  id             String     @id @default(uuid()) @db.Uuid
+  bookId         String     @db.Uuid
+  format         BookFormat
+  storageKey     String     @unique @db.VarChar(512)
+  originalName   String     @db.VarChar(255)
+  mimeType       String     @db.VarChar(128)
+  sizeBytes      BigInt
+  checksumSha256 String     @db.VarChar(64)
+  isSample       Boolean    @default(false)
+  createdAt      DateTime   @default(now()) @db.Timestamptz(6)
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, format, isSample])
+  @@index([bookId])
+  @@map("book_files")
+}
+
+model BookPrice {
+  id        String   @id @default(uuid()) @db.Uuid
+  bookId    String   @db.Uuid
+  currency  String   @db.VarChar(3)
+  amount    Decimal  @db.Decimal(12, 2)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, currency])
+  @@index([bookId])
+  @@map("book_prices")
+}
+
+// -------------------------------------------------------------
+// 4. SHOPPING CART & COMMERCE ORDERS
+// -------------------------------------------------------------
+
+model Cart {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+
+  @@unique([userId])
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  cartId    String   @db.Uuid
+  bookId    String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, bookId])
+  @@index([cartId])
+  @@map("cart_items")
+}
+
+model Order {
+  id              String      @id @default(uuid()) @db.Uuid
+  orderNumber     String      @unique @db.VarChar(64)
+  userId          String      @db.Uuid
+  currency        String      @db.VarChar(3)
+  totalAmount     Decimal     @db.Decimal(12, 2)
+  status          OrderStatus @default(PENDING)
+  createdAt       DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime    @updatedAt @db.Timestamptz(6)
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  items        OrderItem[]
+  payments     Payment[]
+  saleLedgers  SaleLedger[]
+  refunds      Refund[]
+  entitlements Entitlement[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id                 String   @id @default(uuid()) @db.Uuid
+  orderId            String   @db.Uuid
+  bookId             String   @db.Uuid
+  sellerId           String   @db.Uuid
+  bookTitleSnapshot  String   @db.VarChar(255)
+  authorNameSnapshot String   @db.VarChar(128)
+  priceSnapshot      Decimal  @db.Decimal(12, 2)
+  commissionRate     Decimal  @db.Decimal(5, 4)
+  commissionAmount   Decimal  @db.Decimal(12, 2)
+  sellerNetAmount    Decimal  @db.Decimal(12, 2)
+  createdAt          DateTime @default(now()) @db.Timestamptz(6)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  book  Book  @relation(fields: [bookId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([bookId])
+  @@index([sellerId])
+  @@map("order_items")
+}
+
+// -------------------------------------------------------------
+// 5. PAYMENTS & WEBHOOK IDEMPOTENCY
+// -------------------------------------------------------------
+
+model Payment {
+  id                String          @id @default(uuid()) @db.Uuid
+  orderId           String          @db.Uuid
+  provider          PaymentProvider
+  providerReference String?         @unique @db.VarChar(255)
+  amount            Decimal         @db.Decimal(12, 2)
+  currency          String          @db.VarChar(3)
+  status            PaymentStatus   @default(INITIATED)
+  metadata          Json?           @db.JsonB
+  errorMessage      String?         @db.Text
+  createdAt         DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(6)
+
+  order         Order                 @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  webhookEvents PaymentWebhookEvent[]
+
+  @@index([orderId])
+  @@index([status])
+  @@index([providerReference])
+  @@map("payments")
+}
+
+model PaymentWebhookEvent {
+  id           String          @id @default(uuid()) @db.Uuid
+  paymentId    String?         @db.Uuid
+  provider     PaymentProvider
+  eventId      String          @unique @db.VarChar(255)
+  eventType    String          @db.VarChar(128)
+  payload      Json            @db.JsonB
+  processed    Boolean         @default(false)
+  processedAt  DateTime?       @db.Timestamptz(6)
+  errorMessage String?         @db.Text
+  createdAt    DateTime        @default(now()) @db.Timestamptz(6)
+
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+  @@index([provider, eventType])
+  @@map("payment_webhook_events")
+}
+
+// -------------------------------------------------------------
+// 6. FINANCIAL LEDGER & PAYOUTS
+// -------------------------------------------------------------
+
+model CommissionRule {
+  id                 String      @id @default(uuid()) @db.Uuid
+  sellerType         SellerType?
+  rate               Decimal     @db.Decimal(5, 4)
+  effectiveStartDate DateTime    @db.Timestamptz(6)
+  effectiveEndDate   DateTime?   @db.Timestamptz(6)
+  isDefault          Boolean     @default(false)
+  createdAt          DateTime    @default(now()) @db.Timestamptz(6)
+
+  @@index([sellerType, isDefault])
+  @@map("commission_rules")
+}
+
+model SaleLedger {
+  id          String          @id @default(uuid()) @db.Uuid
+  orderId     String          @db.Uuid
+  orderItemId String?         @db.Uuid
+  sellerId    String          @db.Uuid
+  entryType   LedgerEntryType
+  amount      Decimal         @db.Decimal(12, 2)
+  currency    String          @db.VarChar(3)
+  description String          @db.VarChar(255)
+  createdAt   DateTime        @default(now()) @db.Timestamptz(6)
+
+  order       Order         @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  seller      SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+  payoutItems PayoutItem[]
+
+  @@index([sellerId])
+  @@index([orderId])
+  @@index([entryType])
+  @@index([createdAt])
+  @@map("sale_ledger")
+}
+
+model Payout {
+  id               String       @id @default(uuid()) @db.Uuid
+  payoutNumber     String       @unique @db.VarChar(64)
+  sellerId         String       @db.Uuid
+  payoutAccountId  String       @db.Uuid
+  amount           Decimal      @db.Decimal(12, 2)
+  currency         String       @db.VarChar(3)
+  status           PayoutStatus @default(REQUESTED)
+  processedAt      DateTime?    @db.Timestamptz(6)
+  failureReason    String?      @db.Text
+  transactionProof String?      @db.VarChar(512)
+  createdAt        DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime     @updatedAt @db.Timestamptz(6)
+
+  seller        SellerProfile       @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+  payoutAccount SellerPayoutAccount @relation(fields: [payoutAccountId], references: [id], onDelete: Restrict)
+  items         PayoutItem[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@map("payouts")
+}
+
+model PayoutItem {
+  id           String @id @default(uuid()) @db.Uuid
+  payoutId     String @db.Uuid
+  saleLedgerId String @db.Uuid
+
+  payout     Payout     @relation(fields: [payoutId], references: [id], onDelete: Cascade)
+  saleLedger SaleLedger @relation(fields: [saleLedgerId], references: [id], onDelete: Restrict)
+
+  @@unique([payoutId, saleLedgerId])
+  @@index([saleLedgerId])
+  @@map("payout_items")
+}
+
+model Refund {
+  id           String   @id @default(uuid()) @db.Uuid
+  orderId      String   @db.Uuid
+  amount       Decimal  @db.Decimal(12, 2)
+  currency     String   @db.VarChar(3)
+  reason       String   @db.Text
+  processedBy  String   @db.Uuid
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@map("refunds")
+}
+
+// -------------------------------------------------------------
+// 7. CUSTOMER LIBRARY, READING & ENGAGEMENT
+// -------------------------------------------------------------
+
+model Entitlement {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  bookId    String   @db.Uuid
+  orderId   String   @db.Uuid
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book            Book              @relation(fields: [bookId], references: [id], onDelete: Restrict)
+  order           Order             @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  readingProgress ReadingProgress[]
+  bookmarks       Bookmark[]
+
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@index([bookId])
+  @@map("entitlements")
+}
+
+model ReadingProgress {
+  id            String     @id @default(uuid()) @db.Uuid
+  entitlementId String     @db.Uuid
+  format        BookFormat
+  locator       String     @db.VarChar(255)
+  percentage    Decimal    @db.Decimal(5, 2)
+  updatedAt     DateTime   @updatedAt @db.Timestamptz(6)
+
+  entitlement Entitlement @relation(fields: [entitlementId], references: [id], onDelete: Cascade)
+
+  @@unique([entitlementId, format])
+  @@index([entitlementId])
+  @@map("reading_progress")
+}
+
+model Bookmark {
+  id            String     @id @default(uuid()) @db.Uuid
+  entitlementId String     @db.Uuid
+  format        BookFormat
+  locator       String     @db.VarChar(255)
+  label         String     @db.VarChar(128)
+  createdAt     DateTime   @default(now()) @db.Timestamptz(6)
+
+  entitlement Entitlement @relation(fields: [entitlementId], references: [id], onDelete: Cascade)
+
+  @@index([entitlementId])
+  @@map("bookmarks")
+}
+
+model Review {
+  id        String   @id @default(uuid()) @db.Uuid
+  bookId    String   @db.Uuid
+  userId    String   @db.Uuid
+  rating    Int      @db.SmallInt
+  comment   String?  @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, userId])
+  @@index([bookId])
+  @@map("reviews")
+}
+
+model WishlistItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  bookId    String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@map("wishlist_items")
+}
+
+// -------------------------------------------------------------
+// 8. MODERATION & AUDIT LOGS
+// -------------------------------------------------------------
+
+model ModerationReview {
+  id          String           @id @default(uuid()) @db.Uuid
+  bookId      String           @db.Uuid
+  moderatorId String           @db.Uuid
+  action      ModerationAction
+  notes       String?          @db.Text
+  createdAt   DateTime         @default(now()) @db.Timestamptz(6)
+
+  book      Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  moderator User @relation(fields: [moderatorId], references: [id], onDelete: Restrict)
+
+  @@index([bookId])
+  @@index([moderatorId])
+  @@map("moderation_reviews")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String?  @db.Uuid
+  action     String   @db.VarChar(128)
+  resource   String   @db.VarChar(128)
+  resourceId String?  @db.VarChar(128)
+  metadata   Json?    @db.JsonB
+  ipAddress  String?  @db.VarChar(45)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([resource, resourceId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
