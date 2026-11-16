@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
-import { canManageFinance } from "@/modules/identity/domain/rbac";
-import { financeService } from "@/modules/finance/application/finance-service";
-import { processRefundSchema } from "@/modules/finance/application/dto";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { getSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
+import { canManageFinance } from "@backend/modules/identity/domain/rbac";
+import { financeService } from "@backend/modules/finance/application/finance-service";
+import { processRefundSchema } from "@backend/modules/finance/application/dto";
 import { AppError, toProblemResponse } from "@/lib/errors/api-error";
 
 export async function POST(req: NextRequest) {
@@ -34,3 +34,4 @@ export async function POST(req: NextRequest) {
     return toProblemResponse(error, "/api/finance/refunds");
   }
 }
+

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { catalogService } from "@/modules/catalog/application/catalog-service";
+import { catalogService } from "@backend/modules/catalog/application/catalog-service";
 import { toProblemResponse } from "@/lib/errors/api-error";
 
 export async function GET() {
@@ -10,3 +10,4 @@ export async function GET() {
     return toProblemResponse(error, "/api/catalog/categories");
   }
 }
+

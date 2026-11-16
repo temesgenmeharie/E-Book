@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { loginSchema } from "@/modules/identity/application/dto";
-import { setSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { loginSchema } from "@backend/modules/identity/application/dto";
+import { setSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
 import { toProblemResponse, AppError } from "@/lib/errors/api-error";
 
 export async function POST(req: NextRequest) {
@@ -34,3 +34,4 @@ export async function POST(req: NextRequest) {
     return toProblemResponse(error, "/api/auth/login");
   }
 }
+

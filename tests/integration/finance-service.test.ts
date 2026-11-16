@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { financeService } from "../../src/modules/finance/application/finance-service";
-import { sellerService } from "../../src/modules/sellers/application/seller-service";
-import { authService } from "../../src/modules/identity/application/auth-service";
-import { prisma } from "../../src/infrastructure/database/prisma";
+import { financeService } from "@backend/modules/finance/application/finance-service";
+import { sellerService } from "@backend/modules/sellers/application/seller-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { prisma } from "@database/client";
 import {
   LedgerEntryType,
   OrderStatus,
@@ -239,3 +239,4 @@ describe("FinanceService Integration Test", () => {
     expect(entitlement?.isActive).toBe(false);
   });
 });
+

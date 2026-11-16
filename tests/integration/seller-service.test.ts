@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { sellerService } from "../../src/modules/sellers/application/seller-service";
-import { authService } from "../../src/modules/identity/application/auth-service";
-import { prisma } from "../../src/infrastructure/database/prisma";
+import { sellerService } from "@backend/modules/sellers/application/seller-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { prisma } from "@database/client";
 import { SellerType, SellerVerificationStatus, RoleType } from "@prisma/client";
 
 describe("SellerService Integration Test", () => {
@@ -85,3 +85,4 @@ describe("SellerService Integration Test", () => {
     expect(metrics.catalog.totalBooks).toBe(0);
   });
 });
+

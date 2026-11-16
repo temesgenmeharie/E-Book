@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
-import { isSeller } from "@/modules/identity/domain/rbac";
-import { catalogService } from "@/modules/catalog/application/catalog-service";
-import { createBookDraftSchema } from "@/modules/catalog/application/dto";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { getSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
+import { isSeller } from "@backend/modules/identity/domain/rbac";
+import { catalogService } from "@backend/modules/catalog/application/catalog-service";
+import { createBookDraftSchema } from "@backend/modules/catalog/application/dto";
 import { AppError, toProblemResponse } from "@/lib/errors/api-error";
 
 export async function POST(req: NextRequest) {
@@ -55,3 +55,4 @@ export async function GET() {
     return toProblemResponse(error, "/api/catalog/books");
   }
 }
+

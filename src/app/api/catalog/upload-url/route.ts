@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
-import { isSeller } from "@/modules/identity/domain/rbac";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { getSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
+import { isSeller } from "@backend/modules/identity/domain/rbac";
 import {
   generatePresignedUploadUrl,
   BUCKET_PRIVATE,
@@ -65,3 +65,4 @@ export async function POST(req: NextRequest) {
     return toProblemResponse(error, "/api/catalog/upload-url");
   }
 }
+

@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { engagementService } from "../../src/modules/engagement/application/engagement-service";
-import { sellerService } from "../../src/modules/sellers/application/seller-service";
-import { authService } from "../../src/modules/identity/application/auth-service";
-import { prisma } from "../../src/infrastructure/database/prisma";
+import { engagementService } from "@backend/modules/engagement/application/engagement-service";
+import { sellerService } from "@backend/modules/sellers/application/seller-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { prisma } from "@database/client";
 import { OrderStatus, SellerType } from "@prisma/client";
 
 describe("EngagementService Integration Test", () => {
@@ -145,3 +145,4 @@ describe("EngagementService Integration Test", () => {
     expect(removeResult.inWishlist).toBe(false);
   });
 });
+

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { discoveryService } from "@/modules/catalog/application/discovery-service";
+import { discoveryService } from "@backend/modules/catalog/application/discovery-service";
 import { AppError, toProblemResponse } from "@/lib/errors/api-error";
 
 export async function GET(
@@ -18,3 +18,4 @@ export async function GET(
     return toProblemResponse(error, `/api/catalog/books/slug/${params.slug}`);
   }
 }
+

@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { paymentService } from "../../src/modules/payments/application/payment-service";
-import { orderService } from "../../src/modules/orders/application/order-service";
-import { cartService } from "../../src/modules/cart/application/cart-service";
-import { catalogService } from "../../src/modules/catalog/application/catalog-service";
-import { sellerService } from "../../src/modules/sellers/application/seller-service";
-import { authService } from "../../src/modules/identity/application/auth-service";
-import { moderationService } from "../../src/modules/moderation/application/moderation-service";
-import { prisma } from "../../src/infrastructure/database/prisma";
+import { paymentService } from "@backend/modules/payments/application/payment-service";
+import { orderService } from "@backend/modules/orders/application/order-service";
+import { cartService } from "@backend/modules/cart/application/cart-service";
+import { catalogService } from "@backend/modules/catalog/application/catalog-service";
+import { sellerService } from "@backend/modules/sellers/application/seller-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { moderationService } from "@backend/modules/moderation/application/moderation-service";
+import { prisma } from "@database/client";
 import {
   BookFormat,
   ModerationAction,
@@ -204,3 +204,4 @@ describe("Payment and Entitlement Integration Test", () => {
     expect(ledgerAfter.length).toBe(2);
   });
 });
+

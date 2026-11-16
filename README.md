@@ -8,34 +8,48 @@ Designed for authors and publishers across Ethiopia and international markets to
 
 ## 🏗 System Architecture & Design Principles
 
-### 1. Modular Monolith Architecture
-The codebase strictly adheres to a domain-driven **Modular Monolith** pattern organized in vertical slices:
+### 1. Modular Architecture & Clean Layered Separation
+The codebase strictly partitions concerns into explicit Frontend, Backend, and Database domains:
 
 ```
 src/
-├── app/                           # Next.js App Router (Pages, UI Layouts & API Route Handlers)
-│   ├── (auth)/                    # Authentication flows (Login, Register)
-│   ├── (customer)/                # Customer flows (Cart, Checkout, Library, Reader)
-│   ├── (seller)/                  # Author/Publisher flows (Onboarding, Dashboard, Book Publishing)
-│   ├── (store)/                   # Public Storefront & Book Discovery
-│   ├── admin/                     # Moderation, Finance & User Administration
-│   └── api/                       # REST APIs, Webhooks, Protected Streaming & File Delivery
-├── modules/                       # Vertical Domain Modules
-│   ├── identity/                  # Authentication, Sessions, RBAC & Password Hashing
-│   ├── sellers/                   # Seller Onboarding, Payout Accounts & Metrics
-│   ├── catalog/                   # Book Publishing, Metadata, Files & Public Discovery
-│   ├── moderation/                # Editorial Review Queue & Audit Trail
-│   ├── cart/                      # Shopping Cart Session Management
-│   ├── orders/                    # Atomic Checkout, Item Price Snapshots & Commission Splits
-│   ├── payments/                  # Payment Provider Adapters & Idempotent Webhook Engine
-│   ├── library/                   # Entitlement Validation, Reading Progress & Bookmarks
-│   ├── finance/                   # Double-Entry Ledger, Payouts & Refund Reversals
-│   ├── engagement/                # Verified Purchaser Reviews, Ratings & Wishlists
-│   └── admin/                     # System Administration, Role Grants & Audit Logs
-├── infrastructure/                # Cross-Cutting Infrastructure
-│   ├── database/                  # Prisma ORM Singleton Client
-│   └── storage/                   # MinIO S3 Client, Byte-Range Streaming & Presigned URLs
-└── lib/                           # Shared Utilities, Errors (RFC 7807), Currency & Validation
+├── frontend/                      # [FRONTEND LAYER] Pure Presentation & User Interface
+│   ├── components/                # Reusable UI widgets (Navbar, BookCards, Feedback)
+│   ├── views/                     # Full-Page Presentation Views
+│   │   ├── auth/                  # LoginView, RegisterView
+│   │   ├── store/                 # CatalogView, BookDetailView
+│   │   ├── customer/              # CartView, CheckoutView, LibraryView, ReaderView
+│   │   ├── seller/                # SellerDashboardView, SellerOnboardingView, NewBookView
+│   │   └── admin/                 # AdminUsersView, ModerationView, FinanceView
+│   └── index.ts                   # Frontend Barrel Export
+│
+├── backend/                       # [BACKEND LAYER] Pure Business Logic & Domain Services
+│   ├── modules/                   # Domain Modules (Application & Domain Layers)
+│   │   ├── identity/              # Auth, RBAC, Session Cookies, Password Hashing
+│   │   ├── sellers/               # Author & Publisher Onboarding, Payout Accounts
+│   │   ├── catalog/               # Book Publishing, Metadata, Storage Keys, Search
+│   │   ├── moderation/            # Content Review Workflows & Editorial Audit
+│   │   ├── cart/                  # Shopping Basket Session Logic
+│   │   ├── orders/                # Checkout Snapshots & Platform Commission Splits
+│   │   ├── payments/              # Payment Adapters (Chapa, Telebirr, Stripe) & Webhooks
+│   │   ├── library/               # Digital Entitlements, Reading Progress & Byte Streaming
+│   │   ├── finance/               # Double-Entry Ledger, Payouts & Compensating Refunds
+│   │   ├── engagement/            # Verified Purchaser Reviews, Ratings & Wishlists
+│   │   └── admin/                 # User Governance, Role Grants & Audit Logs
+│   ├── infrastructure/            # MinIO S3 Client, Object Storage & External Adapters
+│   └── index.ts                   # Unified Backend Facade
+│
+├── database/                      # [DATABASE LAYER] Data Access, ORM & Persistence
+│   ├── client.ts                  # PostgreSQL Prisma Singleton Client
+│   └── index.ts                   # Database Exports & Schema Model Types
+│
+└── app/                           # [ROUTING LAYER] Thin Next.js App Router Delegates
+    ├── (auth)/                    # Thin page wrappers rendering @frontend/views/auth/*
+    ├── (customer)/                # Thin page wrappers rendering @frontend/views/customer/*
+    ├── (seller)/                  # Thin page wrappers rendering @frontend/views/seller/*
+    ├── (store)/                   # Thin page wrappers rendering @frontend/views/store/*
+    ├── admin/                     # Thin page wrappers rendering @frontend/views/admin/*
+    └── api/                       # Thin REST API Route Handlers delegating to @backend/*
 ```
 
 ### 2. Architectural Boundaries & Layering

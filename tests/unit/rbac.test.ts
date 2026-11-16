@@ -6,7 +6,7 @@ import {
   canManageFinance,
   isAdministrator,
   AuthenticatedUserContext,
-} from "../../src/modules/identity/domain/rbac";
+} from "@backend/modules/identity/domain/rbac";
 import { RoleType } from "@prisma/client";
 
 describe("RBAC Authorization Rules", () => {
@@ -80,3 +80,4 @@ describe("RBAC Authorization Rules", () => {
     expect(canModerateContent(inactiveAdmin)).toBe(false);
   });
 });
+

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { paymentService } from "@/modules/payments/application/payment-service";
+import { paymentService } from "@backend/modules/payments/application/payment-service";
 import { PaymentProvider } from "@prisma/client";
 import { toProblemResponse } from "@/lib/errors/api-error";
 
@@ -22,3 +22,4 @@ export async function POST(req: NextRequest) {
     return toProblemResponse(error, "/api/webhooks/payment/chapa");
   }
 }
+

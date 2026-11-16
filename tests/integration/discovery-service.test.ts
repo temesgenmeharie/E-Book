@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { discoveryService } from "../../src/modules/catalog/application/discovery-service";
-import { catalogService } from "../../src/modules/catalog/application/catalog-service";
-import { sellerService } from "../../src/modules/sellers/application/seller-service";
-import { authService } from "../../src/modules/identity/application/auth-service";
-import { moderationService } from "../../src/modules/moderation/application/moderation-service";
-import { prisma } from "../../src/infrastructure/database/prisma";
+import { discoveryService } from "@backend/modules/catalog/application/discovery-service";
+import { catalogService } from "@backend/modules/catalog/application/catalog-service";
+import { sellerService } from "@backend/modules/sellers/application/seller-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { moderationService } from "@backend/modules/moderation/application/moderation-service";
+import { prisma } from "@database/client";
 import { BookFormat, ModerationAction, RoleType, SellerType } from "@prisma/client";
 
 describe("DiscoveryService Integration Test", () => {
@@ -140,3 +140,4 @@ describe("DiscoveryService Integration Test", () => {
     expect(book?.seller.businessName).toBe("Discovery Press");
   });
 });
+

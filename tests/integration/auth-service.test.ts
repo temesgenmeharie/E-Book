@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { authService } from "../../src/modules/identity/application/auth-service";
-import { prisma } from "../../src/infrastructure/database/prisma";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { prisma } from "@database/client";
 
 describe("AuthService Integration Test", () => {
   const testEmail = `test_${Date.now()}@example.com`;
@@ -80,3 +80,4 @@ describe("AuthService Integration Test", () => {
     expect(userContext).toBeNull();
   });
 });
+

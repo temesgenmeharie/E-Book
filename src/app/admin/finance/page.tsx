@@ -207,3 +207,4 @@ export default function AdminFinancePage() {
     </div>
   );
 }
+

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
-import { orderService } from "@/modules/orders/application/order-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { getSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
+import { orderService } from "@backend/modules/orders/application/order-service";
 import { AppError, toProblemResponse } from "@/lib/errors/api-error";
 
 export async function GET(
@@ -21,3 +21,4 @@ export async function GET(
     return toProblemResponse(error, `/api/orders/${params.id}`);
   }
 }
+

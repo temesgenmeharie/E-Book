@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { hashPassword, verifyPassword } from "../../src/modules/identity/domain/password";
+import { hashPassword, verifyPassword } from "@backend/modules/identity/domain/password";
 
 describe("Password Hashing & Verification", () => {
   it("hashes password and verifies candidate correctly", async () => {
@@ -22,3 +22,4 @@ describe("Password Hashing & Verification", () => {
     );
   });
 });
+

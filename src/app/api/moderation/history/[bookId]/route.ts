@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
-import { canModerateContent } from "@/modules/identity/domain/rbac";
-import { moderationService } from "@/modules/moderation/application/moderation-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { getSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
+import { canModerateContent } from "@backend/modules/identity/domain/rbac";
+import { moderationService } from "@backend/modules/moderation/application/moderation-service";
 import { AppError, toProblemResponse } from "@/lib/errors/api-error";
 
 export async function GET(
@@ -25,3 +25,4 @@ export async function GET(
     return toProblemResponse(error, `/api/moderation/history/${params.bookId}`);
   }
 }
+

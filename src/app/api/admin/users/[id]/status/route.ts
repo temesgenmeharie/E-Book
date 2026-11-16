@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
-import { isAdministrator } from "@/modules/identity/domain/rbac";
-import { adminService } from "@/modules/admin/application/admin-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { getSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
+import { isAdministrator } from "@backend/modules/identity/domain/rbac";
+import { adminService } from "@backend/modules/admin/application/admin-service";
 import { AppError, toProblemResponse } from "@/lib/errors/api-error";
 
 export async function PUT(
@@ -28,3 +28,4 @@ export async function PUT(
     return toProblemResponse(error, `/api/admin/users/${params.id}/status`);
   }
 }
+

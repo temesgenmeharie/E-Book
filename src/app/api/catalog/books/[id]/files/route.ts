@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
-import { isSeller } from "@/modules/identity/domain/rbac";
-import { catalogService } from "@/modules/catalog/application/catalog-service";
-import { attachBookFileSchema } from "@/modules/catalog/application/dto";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { getSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
+import { isSeller } from "@backend/modules/identity/domain/rbac";
+import { catalogService } from "@backend/modules/catalog/application/catalog-service";
+import { attachBookFileSchema } from "@backend/modules/catalog/application/dto";
 import { AppError, toProblemResponse } from "@/lib/errors/api-error";
 
 export async function POST(
@@ -47,3 +47,4 @@ export async function POST(
     return toProblemResponse(error, `/api/catalog/books/${params.id}/files`);
   }
 }
+

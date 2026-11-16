@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { adminService } from "../../src/modules/admin/application/admin-service";
-import { authService } from "../../src/modules/identity/application/auth-service";
-import { prisma } from "../../src/infrastructure/database/prisma";
+import { adminService } from "@backend/modules/admin/application/admin-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { prisma } from "@database/client";
 import { RoleType, SellerType } from "@prisma/client";
 
 describe("AdminService Integration Test", () => {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { discoveryService } from "@/modules/catalog/application/discovery-service";
+import { discoveryService } from "@backend/modules/catalog/application/discovery-service";
 import { BookFormat } from "@prisma/client";
 import { toProblemResponse } from "@/lib/errors/api-error";
 
@@ -36,3 +36,4 @@ export async function GET(req: NextRequest) {
     return toProblemResponse(error, "/api/catalog/search");
   }
 }
+

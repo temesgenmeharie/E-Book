@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
-import { cartService } from "@/modules/cart/application/cart-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { getSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
+import { cartService } from "@backend/modules/cart/application/cart-service";
 import { AppError, toProblemResponse } from "@/lib/errors/api-error";
 
 export async function POST(req: NextRequest) {
@@ -21,3 +21,4 @@ export async function POST(req: NextRequest) {
     return toProblemResponse(error, "/api/cart/items");
   }
 }
+

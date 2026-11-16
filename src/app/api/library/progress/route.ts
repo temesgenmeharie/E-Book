@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/identity/application/auth-service";
-import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
-import { libraryService } from "@/modules/library/application/library-service";
+import { authService } from "@backend/modules/identity/application/auth-service";
+import { getSessionCookie } from "@backend/modules/identity/infrastructure/session-cookie";
+import { libraryService } from "@backend/modules/library/application/library-service";
 import { BookFormat } from "@prisma/client";
 import { AppError, toProblemResponse } from "@/lib/errors/api-error";
 
@@ -32,3 +32,4 @@ export async function POST(req: NextRequest) {
     return toProblemResponse(error, "/api/library/progress");
   }
 }
+
