@@ -1,0 +1,35 @@
+import { NextRequest, NextResponse } from "next/server";
+import { authService } from "@/modules/identity/application/auth-service";
+import { getSessionCookie } from "@/modules/identity/infrastructure/session-cookie";
+import { sellerService } from "@/modules/sellers/application/seller-service";
+import { payoutAccountSchema } from "@/modules/sellers/application/dto";
+import { AppError, toProblemResponse } from "@/lib/errors/api-error";
+
+export async function POST(req: NextRequest) {
+  try {
+    const token = getSessionCookie();
+    if (!token) throw AppError.unauthorized("Authentication required");
+
+    const user = await authService.validateSession(token);
+    if (!user) throw AppError.unauthorized("Session expired or invalid");
+
+    const body = await req.json();
+    const parseResult = payoutAccountSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      throw AppError.badRequest("Validation failed", parseResult.error.flatten().fieldErrors);
+    }
+
+    const account = await sellerService.addPayoutAccount(user.id, parseResult.data);
+
+    return NextResponse.json(
+      {
+        account,
+        message: "Payout account registered successfully",
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    return toProblemResponse(error, "/api/sellers/payout-accounts");
+  }
+}
