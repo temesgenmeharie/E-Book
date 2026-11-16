@@ -177,8 +177,16 @@ export function CatalogView() {
                   className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
                 >
                   <Link href={`/books/${book.slug}`} className="block">
-                    <div className="aspect-[3/4] bg-slate-100 relative flex items-center justify-center text-slate-400 group-hover:bg-slate-200 transition-colors">
-                      <BookOpen className="h-10 w-10 text-slate-300" />
+                    <div className="aspect-[3/4] bg-slate-100 relative flex items-center justify-center text-slate-400 group-hover:bg-slate-200 transition-colors overflow-hidden">
+                      {book.coverImageKey && (book.coverImageKey.startsWith("http") || book.coverImageKey.startsWith("/")) ? (
+                        <img
+                          src={book.coverImageKey}
+                          alt={book.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <BookOpen className="h-10 w-10 text-slate-300" />
+                      )}
                       <div className="absolute top-2 right-2 flex flex-col gap-1">
                         {book.files.map((f, i) => (
                           <span

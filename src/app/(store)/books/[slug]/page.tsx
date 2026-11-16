@@ -152,7 +152,15 @@ export default function BookDetailPage() {
           {/* Cover Column */}
           <div className="md:col-span-1">
             <div className="aspect-[3/4] bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 relative overflow-hidden shadow-inner">
-              <BookOpen className="h-16 w-16 text-slate-300" />
+              {book.coverImageKey && (book.coverImageKey.startsWith("http") || book.coverImageKey.startsWith("/")) ? (
+                <img
+                  src={book.coverImageKey}
+                  alt={book.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <BookOpen className="h-16 w-16 text-slate-300" />
+              )}
             </div>
 
             <div className="mt-4 space-y-2">
