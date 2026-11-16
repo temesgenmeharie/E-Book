@@ -21,3 +21,4 @@ export * from "./views/admin/AdminUsersView";
 // Authentication Views
 export * from "./views/auth/LoginView";
 export * from "./views/auth/RegisterView";
+

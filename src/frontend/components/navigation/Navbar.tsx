@@ -67,3 +67,4 @@ export function Navbar({ active, cartCount = 0 }: NavbarProps) {
     </header>
   );
 }
+
