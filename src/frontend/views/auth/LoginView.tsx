@@ -44,12 +44,12 @@ export function LoginView() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xs border border-slate-200">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6">
+      <div className="w-full max-w-[440px] mx-auto bg-white p-8 sm:p-10 rounded-2xl shadow-lg shadow-slate-200/60 border border-slate-200">
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center space-x-2">
-            <BookOpen className="h-8 w-8 text-emerald-600" />
-            <span className="text-xl font-bold text-slate-900">E-Book Marketplace</span>
+          <Link href="/catalog" className="inline-flex items-center gap-2 text-indigo-600 font-bold text-xl hover:opacity-90 transition">
+            <BookOpen className="h-7 w-7" />
+            <span className="text-slate-900">E-Book Marketplace</span>
           </Link>
           <h2 className="mt-6 text-2xl font-bold tracking-tight text-slate-900">
             Sign in to your account
@@ -58,68 +58,66 @@ export function LoginView() {
             Or{" "}
             <Link
               href="/auth/register"
-              className="font-medium text-emerald-600 hover:text-emerald-500"
+              className="font-semibold text-indigo-600 hover:text-indigo-500 underline"
             >
-              create a new customer or author account
+              create a customer or author account
             </Link>
           </p>
         </div>
 
         {error && (
-          <div className="rounded-lg bg-red-50 p-4 border border-red-200 flex items-start space-x-3 text-red-700 text-sm">
+          <div className="mt-6 rounded-xl bg-red-50 p-4 border border-red-200 flex items-start space-x-3 text-red-700 text-sm">
             <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-500 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-slate-700"
-              >
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 shadow-xs focus:border-emerald-500 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 sm:text-sm"
-                placeholder="name@example.com"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-slate-700"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 shadow-xs focus:border-emerald-500 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 sm:text-sm"
-                placeholder="••••••••"
-              />
-            </div>
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-semibold text-slate-700 mb-1"
+            >
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-slate-900 shadow-xs focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 text-sm transition"
+              placeholder="name@example.com"
+            />
           </div>
 
           <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-semibold text-slate-700 mb-1"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-slate-900 shadow-xs focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 text-sm transition"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <div className="pt-2">
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-xs text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 transition-all"
+              className="w-full flex justify-center py-3 px-4 rounded-xl shadow-xs text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition"
             >
               {loading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -129,8 +127,13 @@ export function LoginView() {
             </button>
           </div>
         </form>
+
+        <div className="mt-6 pt-6 border-t border-slate-100 text-center">
+          <Link href="/catalog" className="text-xs text-slate-500 hover:text-slate-800 font-medium">
+            &larr; Back to Public Catalog
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
-
