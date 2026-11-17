@@ -61,16 +61,42 @@ export default function NewBookPage() {
     const urlData = await urlRes.json();
     if (!urlRes.ok) throw new Error(urlData.detail || "Failed to get upload authorization");
 
-    // Direct PUT to MinIO / S3
-    const uploadRes = await fetch(urlData.uploadUrl, {
-      method: "PUT",
-      headers: {
-        "Content-Type": file.type || (fileType === "cover" ? "image/jpeg" : "application/pdf"),
-      },
-      body: file,
-    });
+    // Try direct PUT to MinIO / S3 first
+    let directUploadSucceeded = false;
+    try {
+      const uploadRes = await fetch(urlData.uploadUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type || (fileType === "cover" ? "image/jpeg" : "application/pdf"),
+        },
+        body: file,
+      });
 
-    if (!uploadRes.ok) throw new Error("Failed to upload binary file to object storage");
+      if (uploadRes.ok) {
+        directUploadSucceeded = true;
+      }
+    } catch {
+      // Browser direct network access to MinIO might be blocked or hostname unresolved
+      directUploadSucceeded = false;
+    }
+
+    if (!directUploadSucceeded) {
+      // Automatic fallback: Stream upload via server API proxy
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("storageKey", urlData.storageKey);
+      formData.append("bucket", urlData.bucket);
+
+      const proxyRes = await fetch("/api/catalog/upload-proxy", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!proxyRes.ok) {
+        const proxyData = await proxyRes.json().catch(() => ({}));
+        throw new Error(proxyData.detail || "Failed to upload file to storage.");
+      }
+    }
 
     return urlData.storageKey as string;
   }
@@ -331,6 +357,13 @@ export default function NewBookPage() {
               </div>
             </div>
           </div>
+
+          {error && (
+            <div className="rounded-xl bg-red-50 p-4 border border-red-200 flex items-start space-x-3 text-red-700 text-sm">
+              <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-500 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
 
           <button
             type="submit"

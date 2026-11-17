@@ -15,6 +15,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-ebook_user}:${POSTGRES_PASSWORD:-ebook_pass_secure}@postgres:5432/${POSTGRES_DB:-ebook_marketplace}?schema=public
       STORAGE_ENDPOINT: minio
       STORAGE_PORT: 9000
+      STORAGE_PUBLIC_ENDPOINT: http://localhost:9000
       STORAGE_USE_SSL: "false"
       STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER:-minio_admin}
       STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minio_secret_secure}

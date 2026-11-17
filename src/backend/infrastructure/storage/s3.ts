@@ -8,6 +8,7 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const endpoint = `http://${process.env.STORAGE_ENDPOINT || "127.0.0.1"}:${process.env.STORAGE_PORT || "9000"}`;
+const publicEndpoint = process.env.STORAGE_PUBLIC_ENDPOINT || `http://localhost:${process.env.STORAGE_PORT || "9000"}`;
 
 export const s3Client = new S3Client({
   endpoint,
@@ -17,6 +18,16 @@ export const s3Client = new S3Client({
     secretAccessKey: process.env.STORAGE_SECRET_KEY || "minio_secret_secure",
   },
   forcePathStyle: true, // Crucial for MinIO and local S3-compatible proxies
+});
+
+export const publicS3Client = new S3Client({
+  endpoint: publicEndpoint,
+  region: "us-east-1",
+  credentials: {
+    accessKeyId: process.env.STORAGE_ACCESS_KEY || "minio_admin",
+    secretAccessKey: process.env.STORAGE_SECRET_KEY || "minio_secret_secure",
+  },
+  forcePathStyle: true,
 });
 
 export const BUCKET_PRIVATE = process.env.STORAGE_BUCKET_PRIVATE || "ebook-private-assets";
@@ -57,7 +68,7 @@ export async function generatePresignedUploadUrl(params: {
     ContentType: params.contentType,
   });
 
-  return getSignedUrl(s3Client, command, {
+  return getSignedUrl(publicS3Client, command, {
     expiresIn: params.expiresInSeconds || 900, // 15 minutes default
   });
 }
@@ -79,7 +90,7 @@ export async function generatePresignedDownloadUrl(params: {
       : undefined,
   });
 
-  return getSignedUrl(s3Client, command, {
+  return getSignedUrl(publicS3Client, command, {
     expiresIn: params.expiresInSeconds || 300, // 5 minutes default
   });
 }
