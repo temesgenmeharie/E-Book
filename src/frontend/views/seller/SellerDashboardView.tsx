@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Navbar } from "../../components/navigation/Navbar";
+import { Footer } from "../../components/navigation/Footer";
 
 interface DashboardData {
   metrics: {
@@ -199,6 +200,8 @@ export function SellerDashboardView() {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

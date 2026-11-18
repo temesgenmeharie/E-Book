@@ -47,3 +47,4 @@ export async function POST(req: NextRequest) {
     return toProblemResponse(error, "/api/catalog/upload-proxy");
   }
 }
+

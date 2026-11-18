@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BookOpen, ArrowLeft, Upload, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { Navbar } from "@/frontend/components/navigation/Navbar";
+import { Footer } from "@/frontend/components/navigation/Footer";
 
 interface Category {
   id: string;
@@ -179,8 +181,9 @@ export default function NewBookPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-surface flex flex-col">
+      <Navbar active="seller" />
+      <div className="max-w-3xl mx-auto py-10 px-4 sm:px-6 lg:px-8 w-full flex-1">
         <div className="mb-6 flex items-center justify-between">
           <Link
             href="/seller/dashboard"
@@ -384,6 +387,7 @@ export default function NewBookPage() {
           </button>
         </form>
       </div>
+      <Footer />
     </div>
   );
 }

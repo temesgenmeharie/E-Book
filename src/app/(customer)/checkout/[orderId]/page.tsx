@@ -12,7 +12,11 @@ import {
   Loader2,
   AlertCircle,
   Smartphone,
+  Lock,
+  ArrowRight,
 } from "lucide-react";
+import { Navbar } from "@/frontend/components/navigation/Navbar";
+import { Footer } from "@/frontend/components/navigation/Footer";
 
 interface OrderDetail {
   id: string;
@@ -104,111 +108,154 @@ export default function CheckoutPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      <div className="min-h-screen bg-surface flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex flex-col items-center justify-center p-8">
+          <Loader2 className="h-8 w-8 animate-spin text-gold-500" />
+          <p className="text-secondaryText text-xs mt-3">Preparing secure checkout session...</p>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   if (!order) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <p className="text-red-700 font-semibold">{error || "Order not found"}</p>
-        <Link href="/cart" className="mt-4 bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">
-          Back to Cart
-        </Link>
+      <div className="min-h-screen bg-surface flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center max-w-md mx-auto">
+          <AlertCircle className="w-12 h-12 text-red-500 mb-3" />
+          <h2 className="font-serif text-2xl font-bold text-navy-900">Order Not Found</h2>
+          <p className="text-sm text-secondaryText mt-1.5 leading-relaxed">
+            {error || "We were unable to locate your active checkout order."}
+          </p>
+          <Link
+            href="/cart"
+            className="mt-6 px-6 py-2.5 rounded-xl bg-navy-900 text-white font-semibold text-xs shadow-xs hover:bg-navy-800 transition"
+          >
+            &larr; Return to Shopping Cart
+          </Link>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-surface flex flex-col">
+      <Navbar />
+
+      <main className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8 w-full flex-1">
         <div className="mb-6 flex items-center justify-between">
           <Link
             href="/cart"
-            className="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-slate-900"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-secondaryText hover:text-navy-900 transition"
           >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Return to Basket</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>&larr; Return to Shopping Basket</span>
           </Link>
-          <div className="flex items-center space-x-2">
-            <BookOpen className="h-6 w-6 text-emerald-600" />
-            <span className="font-bold text-slate-900">Secure Checkout</span>
+          <div className="flex items-center gap-1.5 text-xs font-bold text-navy-900 bg-white px-3 py-1 rounded-lg border border-borderBase">
+            <Lock className="w-3.5 h-3.5 text-emerald-600" />
+            <span>256-Bit Encrypted Checkout</span>
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 rounded-xl bg-red-50 p-4 border border-red-200 text-red-700 text-sm">
+          <div className="mb-6 rounded-xl bg-red-50 p-4 border border-red-200 text-red-700 text-sm font-medium">
             {error}
           </div>
         )}
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-6">
-          <div className="border-b pb-4 flex justify-between items-center">
+        <div className="bg-white rounded-2xl border border-borderBase p-6 sm:p-8 shadow-xs space-y-8">
+          {/* Order Header */}
+          <div className="border-b border-borderBase pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Order: {order.orderNumber}</h2>
-              <p className="text-xs text-slate-500 mt-0.5">{order.items.length} digital books included</p>
+              <span className="text-xs font-bold uppercase tracking-wider text-gold-600">
+                Order Review
+              </span>
+              <h1 className="font-serif text-2xl font-bold text-navy-900 mt-0.5">
+                Order #{order.orderNumber}
+              </h1>
+              <p className="text-xs text-secondaryText mt-0.5">
+                {order.items.length} {order.items.length === 1 ? "digital edition" : "digital editions"} ready for settlement
+              </p>
             </div>
-            <div className="text-right">
-              <span className="text-xs text-slate-500 block">Total Amount</span>
-              <span className="text-2xl font-black text-slate-900">
-                {order.totalAmount} {order.currency}
+
+            <div className="text-left sm:text-right bg-ivory-50 sm:bg-transparent p-4 sm:p-0 rounded-xl border sm:border-0 border-borderBase">
+              <span className="text-xs font-semibold text-secondaryText block">Total Amount</span>
+              <span className="font-serif text-3xl font-black text-navy-900">
+                {order.totalAmount} <span className="text-xs font-sans font-bold text-slate-500">{order.currency}</span>
               </span>
             </div>
           </div>
 
           {/* Payment Method Selection */}
-          <div>
-            <h3 className="font-bold text-slate-900 text-sm mb-3">Select Payment Gateway</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-3">
+            <h3 className="font-serif text-lg font-bold text-navy-900">
+              Select Payment Gateway
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
                 type="button"
                 onClick={() => setSelectedProvider("CHAPA")}
-                className={`p-4 rounded-xl border text-left flex items-start space-x-3 transition-all ${
+                className={`p-5 rounded-xl border text-left flex items-start gap-4 transition-all ${
                   selectedProvider === "CHAPA"
-                    ? "border-emerald-600 bg-emerald-50/50 ring-2 ring-emerald-600/20"
-                    : "border-slate-200 hover:border-slate-300"
+                    ? "border-navy-900 bg-ivory-50 ring-2 ring-navy-900/10 shadow-xs"
+                    : "border-borderBase hover:border-slate-300 bg-white"
                 }`}
               >
-                <Smartphone className="h-5 w-5 text-emerald-600 mt-0.5" />
+                <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                  <Smartphone className="w-5 h-5" />
+                </div>
                 <div>
-                  <h4 className="font-bold text-sm text-slate-900">Chapa (Ethiopia)</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Telebirr, CBE Birr, Awash, Cards</p>
+                  <h4 className="font-serif font-bold text-sm text-navy-900">Chapa (Ethiopia)</h4>
+                  <p className="text-xs text-secondaryText mt-0.5 leading-snug">
+                    Telebirr, CBE Birr, Awash Bank & Local Debit Cards.
+                  </p>
+                  <span className="inline-block mt-2 text-[10px] font-bold text-emerald-700 uppercase tracking-wider bg-emerald-100/60 px-2 py-0.5 rounded">
+                    Instant Birr Settlement
+                  </span>
                 </div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setSelectedProvider("MANUAL_TEST")}
-                className={`p-4 rounded-xl border text-left flex items-start space-x-3 transition-all ${
+                className={`p-5 rounded-xl border text-left flex items-start gap-4 transition-all ${
                   selectedProvider === "MANUAL_TEST"
-                    ? "border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600/20"
-                    : "border-slate-200 hover:border-slate-300"
+                    ? "border-navy-900 bg-ivory-50 ring-2 ring-navy-900/10 shadow-xs"
+                    : "border-borderBase hover:border-slate-300 bg-white"
                 }`}
               >
-                <CheckCircle2 className="h-5 w-5 text-indigo-600 mt-0.5" />
+                <div className="w-10 h-10 rounded-lg bg-navy-50 text-navy-900 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-5 h-5 text-gold-600" />
+                </div>
                 <div>
-                  <h4 className="font-bold text-sm text-slate-900">Instant Sandbox Test</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Simulate successful server settlement</p>
+                  <h4 className="font-serif font-bold text-sm text-navy-900">Instant Sandbox Test</h4>
+                  <p className="text-xs text-secondaryText mt-0.5 leading-snug">
+                    Simulate instant test settlement without real bank charges.
+                  </p>
+                  <span className="inline-block mt-2 text-[10px] font-bold text-navy-800 uppercase tracking-wider bg-navy-100/60 px-2 py-0.5 rounded">
+                    Demo Mode
+                  </span>
                 </div>
               </button>
             </div>
           </div>
 
           {/* Items Review */}
-          <div className="border-t pt-4">
-            <h4 className="font-semibold text-xs text-slate-500 uppercase tracking-wider mb-2">
-              Purchased Titles
+          <div className="border-t border-borderBase pt-6 space-y-3">
+            <h4 className="font-serif text-base font-bold text-navy-900">
+              Purchased Books ({order.items.length})
             </h4>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-borderBase rounded-xl border border-borderBase bg-ivory-50/50 overflow-hidden">
               {order.items.map((item) => (
-                <div key={item.id} className="py-2.5 flex justify-between text-sm">
+                <div key={item.id} className="p-4 flex items-center justify-between text-xs">
                   <div>
-                    <span className="font-semibold text-slate-900">{item.bookTitleSnapshot}</span>
-                    <span className="text-xs text-slate-500 block">By {item.authorNameSnapshot}</span>
+                    <h5 className="font-serif font-bold text-sm text-navy-900">{item.bookTitleSnapshot}</h5>
+                    <p className="text-secondaryText font-medium mt-0.5">Author: {item.authorNameSnapshot}</p>
                   </div>
-                  <span className="font-bold text-slate-800">
+                  <span className="font-serif font-bold text-sm text-navy-900">
                     {item.priceSnapshot} {order.currency}
                   </span>
                 </div>
@@ -216,25 +263,31 @@ export default function CheckoutPage() {
             </div>
           </div>
 
+          {/* Pay Button */}
           <button
             onClick={handlePay}
             disabled={paying}
-            className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-500 transition-all shadow-sm flex items-center justify-center space-x-2 disabled:opacity-50"
+            className="w-full py-4 px-6 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition disabled:opacity-50"
           >
             {paying ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-gold-400" />
+                <span>Processing Payment...</span>
+              </>
             ) : (
               <>
-                <CreditCard className="h-5 w-5" />
+                <CreditCard className="w-4 h-4 text-gold-400" />
                 <span>
-                  Pay {order.totalAmount} {order.currency} & Get Access
+                  Confirm & Pay {order.totalAmount} {order.currency}
                 </span>
+                <ArrowRight className="w-4 h-4 ml-1" />
               </>
             )}
           </button>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }
-

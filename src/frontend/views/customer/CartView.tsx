@@ -10,8 +10,13 @@ import {
   ShoppingBag,
   Loader2,
   ShieldCheck,
+  Lock,
+  ArrowRight,
+  BookOpen,
 } from "lucide-react";
 import { Navbar } from "../../components/navigation/Navbar";
+import { Footer } from "../../components/navigation/Footer";
+import { BookCover } from "../../components/books/BookCover";
 
 interface CartItem {
   id: string;
@@ -27,7 +32,7 @@ export function CartView() {
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
   const [total, setTotal] = useState("0.00");
-  const [currency, setCurrency] = useState("ETB");
+  const [currency, setCurrency] = useState<"ETB" | "USD">("ETB");
   const [loading, setLoading] = useState(true);
   const [checkingOut, setCheckingOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,124 +96,189 @@ export function CartView() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <Navbar active="cart" cartCount={items.length} />
+    <div className="min-h-screen bg-surface flex flex-col">
+      <Navbar
+        active="cart"
+        activeCurrency={currency}
+        onCurrencyChange={(newCur) => setCurrency(newCur)}
+      />
 
-      <main className="max-w-4xl mx-auto py-10 px-4 w-full flex-1">
+      <main className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8 w-full flex-1">
+        {/* Header Breadcrumb */}
         <div className="mb-6 flex items-center justify-between">
           <Link
             href="/catalog"
-            className="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-slate-900"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-secondaryText hover:text-navy-900 transition"
           >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Continue Shopping</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>&larr; Continue Exploring Books</span>
           </Link>
-          <div className="text-xs font-semibold text-slate-500">
-            Currency: <span className="text-indigo-600">{currency}</span>
+
+          {/* Currency Switcher */}
+          <div className="flex items-center bg-white rounded-lg p-0.5 border border-borderBase text-xs font-bold shadow-xs">
+            <button
+              onClick={() => setCurrency("ETB")}
+              className={`px-2.5 py-1 rounded transition-all ${
+                currency === "ETB" ? "bg-navy-900 text-white" : "text-slate-600 hover:text-navy-900"
+              }`}
+            >
+              ETB (ብር)
+            </button>
+            <button
+              onClick={() => setCurrency("USD")}
+              className={`px-2.5 py-1 rounded transition-all ${
+                currency === "USD" ? "bg-navy-900 text-white" : "text-slate-600 hover:text-navy-900"
+              }`}
+            >
+              USD ($)
+            </button>
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 rounded-xl bg-red-50 p-4 border border-red-200 text-red-700 text-sm">
+          <div className="mb-6 rounded-xl bg-red-50 p-4 border border-red-200 text-red-700 text-sm font-medium">
             {error}
           </div>
         )}
 
         {loading ? (
-          <div className="py-20 flex justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+          <div className="py-24 flex flex-col items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-gold-500" />
+            <p className="text-secondaryText text-xs mt-3">Retrieving your reading cart...</p>
           </div>
         ) : items.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-16 text-center shadow-xs">
-            <ShoppingBag className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-bold text-slate-900">Your basket is empty</h3>
-            <p className="text-sm text-slate-500 mt-1">Discover bestselling digital books from our catalog.</p>
+          <div className="bg-white rounded-2xl border border-borderBase p-16 text-center max-w-lg mx-auto shadow-xs">
+            <div className="w-16 h-16 rounded-full bg-ivory-100 flex items-center justify-center mx-auto mb-4 text-slate-400">
+              <ShoppingBag className="w-8 h-8" />
+            </div>
+            <h2 className="font-serif text-2xl font-bold text-navy-900">Your Cart is Empty</h2>
+            <p className="text-sm text-secondaryText mt-1.5 leading-relaxed">
+              You haven&apos;t added any digital books to your reading cart yet. Discover acclaimed Ethiopian literature, software engineering manuals, and international bestsellers.
+            </p>
             <Link
               href="/catalog"
-              className="mt-6 inline-block bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-500 shadow-xs"
+              className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition"
             >
-              Browse Catalog
+              <span>Explore Bookstore</span>
+              <ArrowRight className="w-4 h-4 text-gold-400" />
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Items Column */}
-            <div className="md:col-span-2 space-y-4">
-              <div className="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 shadow-xs">
-                {items.map((item) => (
-                  <div key={item.id} className="p-4 flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold text-slate-900 text-sm">{item.title}</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">By {item.authorName}</p>
-                      <span className="text-[10px] text-slate-400 font-medium">Published by {item.sellerName}</span>
-                    </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            {/* Left: Cart Items List */}
+            <div className="lg:col-span-8 space-y-4">
+              <div className="bg-white rounded-2xl border border-borderBase p-6 shadow-xs">
+                <div className="flex items-center justify-between pb-4 border-b border-borderBase">
+                  <h2 className="font-serif text-xl font-bold text-navy-900">
+                    Shopping Cart ({items.length} {items.length === 1 ? "Book" : "Books"})
+                  </h2>
+                  <span className="text-xs font-semibold text-secondaryText">Digital Deliveries</span>
+                </div>
 
-                    <div className="flex items-center space-x-4">
-                      <span className="font-bold text-sm text-slate-900">
-                        {item.priceAmount} {item.currency}
-                      </span>
-                      <button
-                        onClick={() => removeItem(item.bookId)}
-                        className="text-slate-400 hover:text-red-500 p-1 transition-colors"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                <div className="divide-y divide-borderBase">
+                  {items.map((item) => (
+                    <div key={item.id} className="py-5 flex items-start gap-4 sm:gap-6">
+                      <div className="w-20 sm:w-24 shrink-0 shadow-sm rounded-md overflow-hidden">
+                        <BookCover
+                          title={item.title}
+                          authorName={item.authorName}
+                          aspectRatio="aspect-[1/1.4]"
+                        />
+                      </div>
+
+                      <div className="flex-1 flex flex-col justify-between self-stretch">
+                        <div>
+                          <h3 className="font-serif font-bold text-base text-navy-900 leading-snug">
+                            {item.title}
+                          </h3>
+                          <p className="text-xs text-secondaryText mt-0.5 font-medium">
+                            {item.authorName}
+                          </p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            Publisher: {item.sellerName}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100">
+                          <button
+                            onClick={() => removeItem(item.bookId)}
+                            className="text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1 transition"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Remove</span>
+                          </button>
+
+                          <div className="font-serif font-bold text-base text-navy-900">
+                            {item.priceAmount} <span className="text-xs font-sans text-slate-500">{item.currency}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Summary Column */}
-            <div className="md:col-span-1">
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-                <h3 className="font-bold text-slate-900 text-md">Order Summary</h3>
+            {/* Right: Order Summary */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="bg-white rounded-2xl border border-borderBase p-6 shadow-xs space-y-5">
+                <h3 className="font-serif text-lg font-bold text-navy-900 border-b border-borderBase pb-3">
+                  Order Summary
+                </h3>
 
-                <div className="space-y-2 text-sm text-slate-600 border-b pb-4">
-                  <div className="flex justify-between">
-                    <span>Subtotal ({items.length} items)</span>
-                    <span className="font-semibold text-slate-900">
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between text-secondaryText">
+                    <span>Items Subtotal</span>
+                    <span className="font-semibold text-primaryText">
                       {total} {currency}
                     </span>
                   </div>
-                  <div className="flex justify-between text-xs text-emerald-600 font-medium">
-                    <span>Digital Instant Delivery</span>
-                    <span>Free</span>
+                  <div className="flex justify-between text-secondaryText">
+                    <span>Digital Delivery</span>
+                    <span className="font-semibold text-emerald-600 uppercase text-xs">Free / Instant</span>
                   </div>
-                </div>
-
-                <div className="flex justify-between text-base font-extrabold text-slate-900">
-                  <span>Total</span>
-                  <span>
-                    {total} {currency}
-                  </span>
+                  <div className="pt-3 border-t border-borderBase flex justify-between items-baseline">
+                    <span className="font-serif font-bold text-base text-navy-900">Total Due</span>
+                    <span className="font-serif font-black text-2xl text-navy-900">
+                      {total} <span className="text-xs font-sans font-bold text-slate-500">{currency}</span>
+                    </span>
+                  </div>
                 </div>
 
                 <button
                   onClick={handleCheckout}
                   disabled={checkingOut}
-                  className="w-full py-3 px-4 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-500 transition-all shadow-xs flex items-center justify-center space-x-2 disabled:opacity-50"
+                  className="w-full py-3.5 px-6 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition disabled:opacity-50"
                 >
                   {checkingOut ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-gold-400" />
+                      <span>Creating Order...</span>
+                    </>
                   ) : (
                     <>
-                      <CreditCard className="h-4 w-4" />
                       <span>Proceed to Checkout</span>
+                      <ArrowRight className="w-4 h-4 text-gold-400" />
                     </>
                   )}
                 </button>
 
-                <div className="pt-2 flex items-center justify-center space-x-1.5 text-[11px] text-slate-500 text-center">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                  <span>Secure 256-bit encrypted checkout</span>
+                <div className="pt-2 text-center space-y-2">
+                  <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500">
+                    <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>256-Bit SSL Encrypted Payment</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Supported: Telebirr, CBE Birr, Chapa, Stripe. Digital entitlement granted immediately after payment.
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }
-

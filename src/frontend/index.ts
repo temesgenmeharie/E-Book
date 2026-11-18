@@ -4,6 +4,9 @@
 
 // Navigation and Common UI Components
 export * from "./components/navigation/Navbar";
+export * from "./components/navigation/Footer";
+export * from "./components/books/BookCard";
+export * from "./components/books/BookCover";
 
 // Storefront & Discovery Views
 export * from "./views/store/CatalogView";
