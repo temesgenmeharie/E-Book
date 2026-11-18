@@ -1,6 +1,6 @@
 # Multi-Vendor E-Book Marketplace
 
-A production-oriented, portfolio-quality multi-vendor digital e-book marketplace engineered with Next.js (App Router), TypeScript (strict mode), PostgreSQL, Prisma ORM, MinIO (S3-compatible object storage), Redis, and Docker Compose.
+A production-oriented, quality multi-vendor digital e-book marketplace engineered with Next.js (App Router), TypeScript (strict mode), PostgreSQL, Prisma ORM, MinIO (S3-compatible object storage), Redis, and Docker Compose.
 
 Designed for authors and publishers across Ethiopia and international markets to publish, monetize, and distribute digital books (PDF & EPUB) securely to global readers.
 
