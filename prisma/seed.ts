@@ -62,7 +62,36 @@ async function main() {
   }
   console.log("✅ Initial categories seeded.");
 
-  // 4. Seed Verified Publisher Account
+  // 4. Seed Superuser Administrator Account
+  const adminEmail = "admin@ebookmarketplace.com";
+  const adminPasswordHash = await bcrypt.hash("AdminPassword2026!", 10);
+
+  const adminUser = await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: { passwordHash: adminPasswordHash, isActive: true, emailVerified: true },
+    create: {
+      email: adminEmail,
+      fullName: "Marketplace Administrator",
+      passwordHash: adminPasswordHash,
+      isActive: true,
+      emailVerified: true,
+    },
+  });
+
+  const adminRoles = [RoleType.ADMINISTRATOR, RoleType.CONTENT_MODERATOR, RoleType.FINANCE_MANAGER];
+  for (const rName of adminRoles) {
+    const role = await prisma.role.findUnique({ where: { name: rName } });
+    if (role) {
+      await prisma.userRole.upsert({
+        where: { userId_roleId: { userId: adminUser.id, roleId: role.id } },
+        update: {},
+        create: { userId: adminUser.id, roleId: role.id },
+      });
+    }
+  }
+  console.log("✅ Superuser Administrator seeded (admin@ebookmarketplace.com).");
+
+  // 5. Seed Verified Publisher Account
   const publisherEmail = "publisher@ethiobooks.com";
   const passwordHash = await bcrypt.hash("Publisher2026!", 10);
 
