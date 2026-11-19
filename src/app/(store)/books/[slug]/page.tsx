@@ -340,17 +340,15 @@ export default function BookDetailPage() {
                 <div className="flex items-center bg-white rounded-xl p-1 border border-borderBase text-xs font-bold shadow-xs">
                   <button
                     onClick={() => setCurrency("ETB")}
-                    className={`px-3 py-1.5 rounded-lg transition-all ${
-                      currency === "ETB" ? "bg-navy-900 text-white shadow-xs" : "text-slate-600 hover:text-navy-900"
-                    }`}
+                    className={`px-3 py-1.5 rounded-lg transition-all ${currency === "ETB" ? "bg-navy-900 text-white shadow-xs" : "text-slate-600 hover:text-navy-900"
+                      }`}
                   >
                     ETB (ብር)
                   </button>
                   <button
                     onClick={() => setCurrency("USD")}
-                    className={`px-3 py-1.5 rounded-lg transition-all ${
-                      currency === "USD" ? "bg-navy-900 text-white shadow-xs" : "text-slate-600 hover:text-navy-900"
-                    }`}
+                    className={`px-3 py-1.5 rounded-lg transition-all ${currency === "USD" ? "bg-navy-900 text-white shadow-xs" : "text-slate-600 hover:text-navy-900"
+                      }`}
                   >
                     USD ($)
                   </button>
@@ -375,11 +373,10 @@ export default function BookDetailPage() {
                 <button
                   onClick={() => handleAddToCart(false)}
                   disabled={addingToCart}
-                  className={`py-3.5 px-6 rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition ${
-                    added
+                  className={`py-3.5 px-6 rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition ${added
                       ? "bg-emerald-600 text-white"
                       : "bg-navy-900 hover:bg-navy-800 text-white"
-                  }`}
+                    }`}
                 >
                   {added ? (
                     <>
@@ -479,9 +476,8 @@ export default function BookDetailPage() {
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              className={`w-3.5 h-3.5 ${
-                                i < rev.rating ? "fill-gold-500 text-gold-500" : "text-slate-200"
-                              }`}
+                              className={`w-3.5 h-3.5 ${i < rev.rating ? "fill-gold-500 text-gold-500" : "text-slate-200"
+                                }`}
                             />
                           ))}
                         </div>

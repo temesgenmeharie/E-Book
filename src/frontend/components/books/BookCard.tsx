@@ -157,3 +157,4 @@ export function BookCard({ book, activeCurrency = "ETB", onAddedToCart }: BookCa
     </div>
   );
 }
+
