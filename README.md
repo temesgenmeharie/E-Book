@@ -75,6 +75,147 @@ Each module implements clean inward dependency direction:
 
 ---
 
+## 👥 Role-Based Access Control (RBAC) & User Responsibilities
+
+The platform implements a strict hierarchical Role-Based Access Control (RBAC) architecture enforced at both the API route handler level and the domain application layer. Sessions are validated on every request via secure HTTP-only cookies (`ebook_session`).
+
+### 1. Summary Matrix of Roles & Permissions
+
+| Permission / Capability | `CUSTOMER` | `AUTHOR` | `PUBLISHER` | `CONTENT_MODERATOR` | `FINANCE_MANAGER` | `ADMINISTRATOR` |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Browse & Search Catalog** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Purchase Books & Cart Checkout** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Read Online & Download Purchased Books** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Submit Verified Book Reviews** | ✅ (Purchasers) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Author Studio Access** | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **Draft & Upload Book Manuscripts (PDF/EPUB)** | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **Set Multi-Currency Pricing (ETB/USD)** | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **Submit Books to Moderation Queue** | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **Request Royalties / Earnings Payout** | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **Content Moderation Queue Access** | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
+| **Approve / Reject / Request Book Changes** | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
+| **Finance Ledgers & Transaction Audits** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **Approve / Disburse Author Payouts** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **Issue Compensating Customer Refunds** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **User Directory & Account Status Toggle** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Assign Roles & Revoke Privileges** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Inspect System-Wide Audit Logs** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+
+---
+
+### 2. Detailed User Responsibilities by Role
+
+#### 🧑‍💻 1. Customer (`CUSTOMER`)
+The standard default role assigned automatically to all newly registered users.
+- **Core Responsibilities**:
+  - Discover, preview, and purchase digital books across Ethiopian and international categories.
+  - Manage personal shopping cart in Ethiopian Birr (`ETB`) or US Dollars (`USD`).
+  - Maintain a permanent personal digital library of purchased editions.
+  - Read purchased PDF and EPUB books using the authenticated in-browser reader.
+  - Download offline copies of entitled manuscripts via short-lived, encrypted presigned URLs.
+  - Track reading progress, percentage completed, and page locators across devices.
+  - Submit genuine ratings (1–5 stars) and editorial reviews for books they have legitimately purchased.
+- **Guardrails & Restrictions**:
+  - Cannot access the Author Studio or upload books for sale.
+  - Cannot review moderation submissions or access internal financial records.
+  - Cannot download books without an active, verified `Entitlement`.
+  - Reviews are blocked if the user does not possess verified purchase entitlement for the book.
+
+---
+
+#### ✍️ 2. Individual Author (`AUTHOR`)
+Independent writers and creators publishing original literary or technical works.
+- **Core Responsibilities**:
+  - Complete author onboarding, providing legal name, bio, and verified payout destination (Telebirr, CBE Birr, or Bank Account).
+  - Draft new book listings with bibliographic metadata (title, subtitle, language, category).
+  - Upload digital assets (JPEG/PNG cover images and PDF/EPUB manuscripts) to private MinIO S3 storage via authenticated presigned URLs.
+  - Configure multi-currency pricing tiers (ETB for Ethiopian buyers, USD for diaspora and international readers).
+  - Submit draft books to the Content Moderation Queue for editorial review.
+  - Revise manuscripts and metadata based on moderator feedback when changes are requested.
+  - Monitor sales performance, unit volumes, and net revenue splits (85% royalty rate) in the Author Studio.
+  - Request payout disbursements against matured `availableBalance` (cleared after the 7-day fraud/chargeback holding period).
+- **Guardrails & Restrictions**:
+  - Cannot approve or publish their own books directly into the public catalog.
+  - Cannot approve payout disbursements or manipulate ledger balances.
+  - Cannot view sales data, financial records, or unpublished drafts of other authors.
+
+---
+
+#### 🏢 3. Publisher (`PUBLISHER`)
+Registered publishing houses, university presses, and institutional catalog distributors.
+- **Core Responsibilities**:
+  - Manage multi-title publishing catalogs under verified business credentials.
+  - Provide institutional verification documentation (trade license, tax registration) for high-volume payouts.
+  - Bulk publish and manage books under different author names within a unified publishing imprint.
+  - Maintain commercial payout bank accounts and track platform commission settlements.
+  - Review sales analytics across multiple authors and titles in the Author Studio.
+- **Guardrails & Restrictions**:
+  - Subject to the same editorial moderation standards as individual authors; all books must pass independent moderation before storefront listing.
+  - Restricted from administrative controls, user management, and system configuration.
+
+---
+
+#### 🛡 4. Content Moderator (`CONTENT_MODERATOR`)
+Platform editorial gatekeepers responsible for quality assurance and compliance.
+- **Core Responsibilities**:
+  - Monitor the `/api/moderation/queue` of books submitted by authors and publishers.
+  - Claim unassigned book submissions to prevent concurrent conflicting reviews.
+  - Inspect book cover imagery, metadata quality, format validity (PDF/EPUB rendering), and sample readability.
+  - Ensure submissions adhere to platform guidelines regarding copyright, hate speech, defamation, and quality standards.
+  - Issue definitive moderation decisions:
+    - **`PUBLISHED`**: Book is approved and instantly becomes discoverable in the public storefront.
+    - **`CHANGES_REQUESTED`**: Returns book to author with specific editorial feedback for correction.
+    - **`REJECTED`**: Permanently rejects non-compliant or plagiarized submissions.
+  - Log immutable editorial notes in `ModerationReview` for audit trails.
+- **Guardrails & Restrictions**:
+  - Cannot access the financial ledger, initiate refunds, or disburse author payouts.
+  - Cannot create, modify, or delete user accounts or alter platform commission rules.
+  - Cannot publish unreviewed books or bypass automated moderation claim locks.
+
+---
+
+#### 💼 5. Finance Manager (`FINANCE_MANAGER`)
+Financial custodians managing platform liquidity, author disbursements, and transaction dispute resolutions.
+- **Core Responsibilities**:
+  - Monitor the double-entry append-only `SaleLedgerEntry` recording gross sales, platform commissions (15%), and author net royalties (85%).
+  - Inspect seller balance lifecycles, ensuring proper maturation from `pendingBalance` to `availableBalance` after the 7-day liability period.
+  - Review withdrawal requests submitted by authors and publishers at `/api/finance/payouts`.
+  - Approve and execute payout disbursements through integrated gateways (Telebirr, CBE Birr) or manual banking transfers.
+  - Record verified banking transaction reference codes (`providerReference`) upon disbursement.
+  - Process customer refund requests, inserting strictly compensating ledger entries (`REFUND_REVERSAL`) to balance accounting sheets without mutating historical records.
+  - Automatically revoke buyer entitlements upon confirmed refund completion.
+- **Guardrails & Restrictions**:
+  - Cannot bypass double-entry ledger rules; all balance adjustments require compensating rows.
+  - Cannot review or publish books in the moderation queue.
+  - Cannot deactivate user accounts or modify platform administrator roles.
+
+---
+
+#### ⚡ 6. System Administrator (`ADMINISTRATOR`)
+Superusers with full governance, compliance oversight, and operational authority over the platform.
+- **Core Responsibilities**:
+  - Complete operational superuser access: encompasses all privileges of `CONTENT_MODERATOR`, `FINANCE_MANAGER`, `AUTHOR`, and `CUSTOMER`.
+  - User Lifecycle Governance: Inspect the complete user directory (`/api/admin/users`) with real-time status and role filtering.
+  - Account State Management: Instantly activate or deactivate delinquent accounts; deactivation automatically purges all active session tokens from Redis/DB.
+  - Role Delegation: Grant or revoke elevated staff roles (`CONTENT_MODERATOR`, `FINANCE_MANAGER`, `AUTHOR`, `PUBLISHER`).
+  - Commission Rule Management: Configure and update default global platform commission percentages (e.g. 15.00%).
+  - Compliance & Security Auditing: Inspect system-wide `AuditLog` events tracking all sensitive actions (role assignments, status toggles, moderation outcomes, payouts).
+- **Guardrails & Restrictions**:
+  - Cannot perform destructive deletions of financial ledger rows (append-only ledger constraint is enforced at database schema and ORM levels).
+  - All administrative actions are permanently recorded in the immutable audit log table with actor ID, IP address, and payload snapshots.
+
+---
+
+### 3. Default Seeded Credentials for Testing
+
+| Role | Email | Password | Access Area |
+| :--- | :--- | :--- | :--- |
+| **Administrator** | `admin@ebookmarketplace.com` | `AdminPassword2026!` | Admin Console ([`/admin/users`](http://localhost:9300/admin/users)) |
+| **Publisher / Author** | `publisher@ethiobooks.com` | `Publisher2026!` | Author Studio ([`/seller/dashboard`](http://localhost:9300/seller/dashboard)) |
+| **Customer (Reader)** | Self-register at [`/auth/register`](http://localhost:9300/auth/register) | Defined at registration | Public Storefront & Library ([`/library`](http://localhost:9300/library)) |
+
+---
+
 ## 💳 Payment Architecture & Financial Splits
 
 ### Double-Entry Financial Splitting

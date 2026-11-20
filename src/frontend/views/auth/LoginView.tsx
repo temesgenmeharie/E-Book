@@ -46,7 +46,10 @@ export function LoginView() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface py-12 px-4 sm:px-6">
-      <div className="w-full max-w-[440px] mx-auto bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-borderBase">
+      <div
+        className="w-full max-w-md mx-auto bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-borderBase"
+        style={{ maxWidth: "440px" }}
+      >
         {/* Brand Header */}
         <div className="text-center">
           <Link href="/" className="inline-flex items-center gap-2.5 group">
